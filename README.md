@@ -11,7 +11,8 @@ Laboratorio técnico de **Colombia Risk**: transforma investigación formulada e
 1. **Desarrollo territorial y económico** — NOVDE, infraestructura, energía, conectividad y evaluación territorial.
 2. **Fraude, identidad y KYC** — anomalías, grafos, señales de dispositivo, identidad sintética y defensa multicapa.
 3. **Riesgo y analítica judicial** — provenance, eventos, entity resolution, supervivencia y exposición con revisión humana.
-4. **Infraestructura transversal** — datos, contratos, evaluación, seguridad y gobernanza.
+4. **[Integridad Pública Verificable](programs/04-public-integrity/README.md)** — anticorrupción, expediente criptográfico, hitos tokenizados, intranets y arquitecturas blockchain comparables.
+5. **Infraestructura transversal** — datos, contratos, evaluación, seguridad y gobernanza.
 
 ## Madurez
 R0 Idea → R1 Formulación → R2 Diseño → R3 Prototipo → R4 Validación → R5 Piloto.
