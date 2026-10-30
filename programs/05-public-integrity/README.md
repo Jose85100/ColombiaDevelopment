@@ -1,6 +1,6 @@
 # Integridad Pública Verificable (IPV)
-Fecha: 2026-10-24. Diseño R2; componente de integridad R3 experimental.
-Responsable institucional y entidades participantes: por definir; no hay convenios ni despliegues.
+
+Fecha: 2026-10-24. Diseño R2; componente de integridad R3 experimental. Responsable institucional y entidades participantes: por definir; no hay convenios ni despliegues.
 
 ## Problema e hipótesis
 Un contrato puede tener documentos sustituidos, actas retroactivas, aprobaciones concentradas o pagos duplicados. IPV propone un expediente verificable desde presupuesto hasta cierre, conectando evidencia física, decisiones y desembolsos. Piloto propuesto: un paquete de obras ferroviarias o logísticas del programa territorial, con datos sintéticos.
@@ -22,22 +22,19 @@ Hipótesis falsable: frente al expediente convencional, controles de integridad 
 | Privacidad verificable | Evaluar credenciales verificables y pruebas de conocimiento cero | Investigación R1; costes y modelo de amenaza por demostrar |
 
 ## Flujo del piloto
-Presupuesto aprobado → contrato versionado → hito registrado → evidencia presentada →
-interventoría valida → ordenador autoriza → tesorería ejecuta → conciliación confirma → cierre.
-Cada paso produce evento inmutable lógicamente; una corrección agrega un evento y conserva historia.
-Proponente, verificador y autorizador deben ser personas distintas; rol y organización se validan desde identidad, nunca desde texto aportado por el cliente.
+Presupuesto aprobado → contrato versionado → hito registrado → evidencia presentada → interventoría valida → ordenador autoriza → tesorería ejecuta → conciliación confirma → cierre. Cada paso produce evento inmutable lógicamente; una corrección agrega un evento y conserva historia. Proponente, verificador y autorizador deben ser personas distintas; rol y organización se validan desde identidad, nunca desde texto aportado por el cliente.
 
-## Entregables
-- [Arquitecturas y decisiones](../../architecture/PUBLIC_INTEGRITY_ARCHITECTURES.md).
-- [Amenazas, contrato y evaluación](THREAT_MODEL_AND_PILOT.md).
-- [Prototipo Python](../../python/colombia_dev/integrity.py) y [pruebas](../../python/tests/test_integrity.py).
-- [Demo ejecutable](../../python/examples/integrity_demo.py).
+## Carpetas y entregables
+- `architecture/`: topologías y decisiones comparativas.
+- `docs/`: modelo de amenazas, piloto y validación.
+- `examples/`: demostración con datos sintéticos.
+- `python/colombia_dev/`: prototipo criptográfico.
+- `tests/`: pruebas de integridad y manipulación.
 
-Desde la raíz: `PYTHONPATH=python python python/examples/integrity_demo.py`.
-Pruebas: `cd python && python -m pytest tests/test_integrity.py -q`.
+Desde la raíz: `PYTHONPATH=programs/05-public-integrity/python python programs/05-public-integrity/examples/integrity_demo.py`.
+Pruebas: `python -m pytest programs/05-public-integrity/tests -q`.
 
 ## Alcance real
 Implementado: hash encadenado, raíz Merkle y verificación contra checkpoint externo.
-Pendiente: firmas, PKI/HSM, persistencia WORM, prueba de inclusión, consenso, smart contracts,
-API, intranet, motor de tokens, integración bancaria y fuentes institucionales.
+Pendiente: firmas, PKI/HSM, persistencia WORM, prueba de inclusión, consenso, smart contracts, API, intranet, motor de tokens, integración bancaria y fuentes institucionales.
 No es una blockchain, no autoriza pagos y no está listo para producción.

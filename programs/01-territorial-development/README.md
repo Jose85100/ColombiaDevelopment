@@ -26,4 +26,11 @@ flowchart LR
  D --> V[Validación y decisión]
 ```
 
+## Archivos del programa
+- `architecture/`: digital twin, corredores y decisiones ferroviarias.
+- `docs/`: riesgos, topografía, supuestos y fuentes de datos.
+- `notebooks/`: escenarios territoriales, Monte Carlo, ferrocarril y corredor Chocó–Pacífico.
+- `python/colombia_dev/` y `cpp/`: prototipos de evaluación territorial e infraestructura.
+- `tests/`: pruebas del código del programa.
+
 Primera exigencia: verificar cifras, cobertura, potencial energético y restricciones ambientales antes de parametrizar modelos.

@@ -1,0 +1,13 @@
+[tool.pytest.ini_options]
+pythonpath = [
+  "programs/01-territorial-development/python",
+  "programs/02-fraud-identity/python",
+  "programs/04-agroindustry-farmer-ownership/python",
+  "programs/05-public-integrity/python",
+]
+testpaths = [
+  "programs/01-territorial-development/tests",
+  "programs/02-fraud-identity/tests",
+  "programs/04-agroindustry-farmer-ownership/tests",
+  "programs/05-public-integrity/tests",
+]

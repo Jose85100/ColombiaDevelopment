@@ -11,13 +11,12 @@
 6. Tecnología: sensores, IoT offline-first, satélite, agronomía de precisión, pronósticos, trazabilidad y seguridad de datos.
 7. Medición: ingresos netos de hogares, productividad, resiliencia, propiedad efectiva, participación de mujeres/jóvenes, suelos y agua.
 
-## Entregables
-- [Modelo de gobernanza y propiedad](GOVERNANCE_AND_EQUITY.md)
-- [Estructuración financiera](CAPITAL_STACK.md)
-- [Educación y protección de estudiantes](EDUCATION_AND_COMMUNITY.md)
-- [Plan técnico de agricultura y agroindustria](TECHNOLOGY_AND_OPERATIONS.md)
-- [Plan piloto y métricas](PILOT_AND_MEASUREMENT.md)
-- [Arquitectura del ecosistema](../../architecture/AGROINDUSTRY_ECOSYSTEM.md)
-- Código en `python/colombia_dev/agro_equity.py` y notebook de simulación.
+## Carpetas del programa
+- `architecture/`: arquitectura del ecosistema agroindustrial.
+- `data/`: tabla de oportunidades departamentales.
+- `docs/`: gobierno, capital, operación, escenarios y medición.
+- `notebooks/`: laboratorio de equity y escenarios de capital privado.
+- `python/colombia_dev/`: motores de escenarios.
+- `tests/`: pruebas de los modelos.
 
 **Guardarraíles:** no prometer rentabilidad ni participación sin acuerdos legales; no convertir aportes laborales en trabajo no remunerado; proteger tierras, datos, voz y derechos de productores. La estructura requiere revisión de derecho societario, cooperativo, laboral, tributario y financiero colombiano.

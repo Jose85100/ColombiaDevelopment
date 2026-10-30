@@ -36,4 +36,10 @@ flowchart LR
  FB --> FS
 ```
 
+## Archivos del programa
+- `architecture/`: arquitectura del stack antifraude.
+- `notebooks/`: contrafactuales por señal y proyección de cartera.
+- `python/colombia_dev/`, `cpp/`: modelos y prototipos.
+- `tests/`: pruebas del código del programa.
+
 Toda cifra de prevalencia o precisión citada en investigación debe validarse contra fuente primaria antes de usarse como benchmark.

@@ -7,23 +7,30 @@ Laboratorio técnico de **Colombia Risk**: transforma investigación formulada e
 - Desarrollo técnico: este repositorio.
 - Gobierno institucional: BUSS_Colombia Risk.
 
-## Programas iniciales
-1. **Desarrollo territorial y económico** — NOVDE, infraestructura, energía, conectividad y evaluación territorial.
-2. **Fraude, identidad y KYC** — anomalías, grafos, señales de dispositivo, identidad sintética y defensa multicapa.
-3. **Riesgo y analítica judicial** — provenance, eventos, entity resolution, supervivencia y exposición con revisión humana.
-4. **[Integridad Pública Verificable](programs/04-public-integrity/README.md)** — anticorrupción, expediente criptográfico, hitos tokenizados, intranets y arquitecturas blockchain comparables.
-5. **Infraestructura transversal** — datos, contratos, evaluación, seguridad y gobernanza.
+## Programas
+
+| N.º | Programa | Estado y alcance |
+|---|---|---|
+| 01 | [Desarrollo territorial y económico](programs/01-territorial-development/README.md) | NOVDE, infraestructura, energía, conectividad y evaluación territorial |
+| 02 | [Fraude, identidad y KYC](programs/02-fraud-identity/README.md) | Anomalías, grafos, señales de dispositivo, identidad sintética y defensa multicapa |
+| 03 | [Riesgo y analítica judicial](programs/03-judicial-risk/README.md) | Provenance, eventos, entity resolution, supervivencia y exposición con revisión humana |
+| 04 | [Agroindustria tecnificada y propiedad campesina](programs/04-agroindustry-farmer-ownership/README.md) | Capital privado, productividad, participación campesina y logística |
+| 05 | [Integridad Pública Verificable](programs/05-public-integrity/README.md) | Anticorrupción, expediente criptográfico, hitos tokenizados, intranets y arquitecturas comparables |
+
+## Organización
+
+Cada programa concentra sus entregables y usa solo las subcarpetas que necesita:
+
+- `architecture/`: diagramas y decisiones propias del programa.
+- `docs/`: informes técnicos, supuestos y catálogos de datos.
+- `notebooks/`: análisis reproducibles.
+- `python/`, `cpp/`, `tests/`, `data/`, `examples/`: código, pruebas, datos de muestra y ejecuciones.
+
+Los recursos transversales están en `shared/`; las reglas de investigación y ciclo de experimentos están en `docs/`. La estructura y comandos de desarrollo están definidos en `CMakeLists.txt`, `pyproject.toml` y `.github/workflows/ci.yml`.
 
 ## Madurez
 R0 Idea → R1 Formulación → R2 Diseño → R3 Prototipo → R4 Validación → R5 Piloto.
 
 Una idea en Drive no equivale a producto terminado. Cada resultado debe registrar fuente, hipótesis, datos/licencia, versión, pruebas, métricas, limitaciones y trazabilidad.
-
-## Estructura
-- `programs/`: programas y proyectos técnicos.
-- `architecture/`: diagramas y decisiones de arquitectura.
-- `shared/`: contratos, validación y componentes comunes.
-- `docs/`: metodología, trazabilidad y decisiones.
-- `tests/`: pruebas transversales.
 
 No almacenar PII, expedientes sensibles, secretos ni datos confidenciales. Colombia Risk es independiente de Axioma; Shadow Risk pertenece a Axioma.
