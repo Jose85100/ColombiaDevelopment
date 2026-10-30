@@ -1,6 +1,6 @@
 # Estrategia agroindustrial por los 32 departamentos de Colombia
 
-**Matriz:** [department_opportunities.csv](data/department_opportunities.csv). Incluye los 32 departamentos y seis dimensiones por territorio: cadenas candidatas, transformación, mercado interno, potencial exportador, logística y riesgos. Es una **hipótesis de cribado cualitativo**, no un ranking de producción observado ni una certificación de aptitud agrícola.
+**Matriz:** [department_opportunities.csv](../data/department_opportunities.csv). Incluye los 32 departamentos y seis dimensiones por territorio: cadenas candidatas, transformación, mercado interno, potencial exportador, logística y riesgos. Es una **hipótesis de cribado cualitativo**, no un ranking de producción observado ni una certificación de aptitud agrícola.
 
 ## Método de priorización
 1. Verificar aptitud productiva y restricciones ambientales con UPRA, IGAC, IDEAM, AGROSAVIA y autoridades locales.
