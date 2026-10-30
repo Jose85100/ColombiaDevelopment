@@ -1,16 +1,15 @@
-# Data centers sostenibles — programa de investigación
+# Centros de datos y energía
 
-**Fuente:** NOVDE / Desarrollo Económico (Drive). Concepto: nodos modulares conectados a microredes, telecomunicaciones y logística regional.
+Este módulo reúne criterios iniciales para evaluar centros de datos como infraestructura territorial: disponibilidad y continuidad de energía, agua, conectividad, suelo, riesgo climático, costos y externalidades locales.
 
-## Proyectos técnicos
-1. Proyección de demanda IT y expansión modular.
-2. Simulación de consumo eléctrico, PUE, UPS y respaldo.
-3. Balance energético solar–baterías–biomasa–red.
-4. Riesgo térmico, disponibilidad hídrica y selección de refrigeración.
-5. TCO/NPV y sensibilidad de ocupación, precio y costo energético.
-6. Simulación de fallas, redundancia N+1 y continuidad de servicio.
-7. Optimización de localización con conectividad, energía, clima y riesgos ambientales.
+## Estado
 
-**Importante:** capacidades 1–5 MW y precios mencionados en NOVDE son supuestos preliminares; requieren estudio de demanda, ingeniería y validación de proveedores. No declarar certificación Tier, disponibilidad garantizada ni permisos obtenidos.
+La arquitectura técnica detallada del centro de datos está pendiente de formulación. Este documento es un marco de evaluación; no representa un diseño de ingeniería ni una decisión de localización.
 
-Ver: [diagrama de data center](../../../architecture/DATACENTER_ENERGY_ARCHITECTURE.md).
+## Entregables del programa
+
+- Prototipo de evaluación de costos y energía: `../python/colombia_dev/infrastructure.py`.
+- Arquitectura territorial y de infraestructura: carpeta `../architecture/`.
+- Supuestos y riesgos: carpeta `../docs/`.
+
+Antes de seleccionar un sitio se requieren datos georreferenciados, permisos, evaluación de impacto ambiental y social, disponibilidad hídrica, capacidad de red y cotizaciones verificables.

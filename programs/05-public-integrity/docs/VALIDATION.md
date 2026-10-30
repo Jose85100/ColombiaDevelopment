@@ -1,16 +1,10 @@
-# Validación del prototipo — 2026-10-24
+# Validación del prototipo IPV
 
-Entorno local: Python 3.12, pytest 9.1.1.
-Comando: `PYTHONPATH=python python -m pytest python/tests/test_integrity.py -q`.
-Resultado: **10 pruebas aprobadas** (0.02 segundos en esta ejecución; no es benchmark).
+El alcance validado corresponde al laboratorio sintético de hashes encadenados y raíz Merkle. No autentica personas, fechas ni la veracidad material de los documentos y no constituye una blockchain desplegada.
 
-Demo: `PYTHONPATH=python python python/examples/integrity_demo.py`.
-- Historia original frente a checkpoint externo: True.
-- Historia reescrita frente a su propio checkpoint: True.
-- Historia reescrita frente a checkpoint original: False.
-- Historia truncada frente a checkpoint original: False.
+Desde la raíz del repositorio:
 
-La suite cubre integridad del subconjunto experimental, no seguridad del sistema completo.
-No se ejecutaron pruebas de firmas, tokens, red blockchain, intranet o banco: no están implementados.
-No se ejecutó la suite preexistente completa en este entorno; los archivos nuevos se integran
-en el descubrimiento de pytest del CI existente.
+- Pruebas: `python -m pytest programs/05-public-integrity/tests -q`.
+- Demo: `PYTHONPATH=programs/05-public-integrity/python python programs/05-public-integrity/examples/integrity_demo.py`.
+
+Los resultados no justifican por sí solos un piloto institucional. Antes de ello se requiere amenaza y modelo de confianza, checkpoint externo autenticado, controles de acceso, revisión jurídica y de protección de datos, integración de firmas, evaluación de costo/latencia y una prueba con actores autorizados y datos sintéticos.
