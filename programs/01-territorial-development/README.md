@@ -32,5 +32,6 @@ flowchart LR
 - `notebooks/`: escenarios territoriales, Monte Carlo, ferrocarril y corredor Chocó–Pacífico.
 - `python/colombia_dev/` y `cpp/`: prototipos de evaluación territorial e infraestructura.
 - `tests/`: pruebas del código del programa.
+- `figures/`: ilustraciones conceptuales (p. ej. `medidor-pendiente/`); no usan datos reales.
 
 Primera exigencia: verificar cifras, cobertura, potencial energético y restricciones ambientales antes de parametrizar modelos.
