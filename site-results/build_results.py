@@ -77,25 +77,31 @@ WEIGHTS = (('Identidad', 1.35, sig.identity), ('Dispositivo', 1.15, sig.device),
 R['fraude'] = dict(scenarios=fraud, example=dict(p=sc0['fraud_probability'], action=sc0['action'], after=cf['after']['fraud_probability'], after_action=cf['after']['action']), p_all_zero=p_zero)
 
 # ======================= 04 · AGROINDUSTRIA =======================
-ap = Project()
+ap_ini = Project()                       # ejercicio inicial del repo
+a_ini = agro_eval(ap_ini)
+# Caso rediseñado: ver supuestos en DISENO. Se mantiene el tope de agua del ejercicio inicial.
+DISENO = dict(hectares=220, yield_ton_ha=10, sale_price_mcop_ton=3.0, staff_per_rotation=10, water_m3_per_ton=90)
+ap = replace(ap_ini, **DISENO)
 a0 = agro_eval(ap)
+price_be_ini = bisect(lambda x: agro_eval(replace(ap_ini, sale_price_mcop_ton=x))['npv_mcop'], .1, 50)
 price_be = bisect(lambda x: agro_eval(replace(ap, sale_price_mcop_ton=x))['npv_mcop'], .1, 50)
 yield_be = bisect(lambda x: agro_eval(replace(ap, yield_ton_ha=x))['npv_mcop'], .1, 200)
 ha_be = bisect(lambda x: agro_eval(replace(ap, hectares=x))['npv_mcop'], 1, 5000)
 price_ebitda0 = bisect(lambda x: agro_eval(replace(ap, sale_price_mcop_ton=x))['year1']['ebitda_mcop'], .1, 50)
 a_ha = agro_eval(replace(ap, hectares=ha_be))
 payroll_share = a0['annual_staff_cost_mcop'] / a0['year1']['revenue_mcop']
-cases = {'Caso base': ap, 'Precio −20 %': replace(ap, sale_price_mcop_ton=ap.sale_price_mcop_ton * .8), 'Rendimiento −25 %': replace(ap, yield_ton_ha=ap.yield_ton_ha * .75),
+cases = {'Ejercicio inicial': ap_ini, 'Caso rediseñado': ap, 'Precio −10 %': replace(ap, sale_price_mcop_ton=ap.sale_price_mcop_ton * .9), 'Precio −20 %': replace(ap, sale_price_mcop_ton=ap.sale_price_mcop_ton * .8),
+         'Rendimiento −10 %': replace(ap, yield_ton_ha=ap.yield_ton_ha * .9), 'Rendimiento −25 %': replace(ap, yield_ton_ha=ap.yield_ton_ha * .75),
          'CAPEX +35 %': replace(ap, capex_mcop=ap.capex_mcop * 1.35), 'Precio +35 %': replace(ap, sale_price_mcop_ton=ap.sale_price_mcop_ton * 1.35)}
 agro_cases = {k: agro_eval(v)['npv_mcop'] for k, v in cases.items()}
-prices = [1.5 + .25 * i for i in range(19)]
+prices = [1.5 + .25 * i for i in range(19)]   # 1,5 a 6,0
 agro_price = [agro_eval(replace(ap, sale_price_mcop_ton=x))['npv_mcop'] for x in prices]
 own = Ownership()
 rounds = [0, 10, 25, 50, 100]
 dil = [equity_after_round(own, 100, n)['farmers'] * 100 for n in rounds]
 with open(os.path.join(ROOT, 'programs/04-agroindustry-farmer-ownership/data/department_opportunities.csv'), newline='', encoding='utf-8') as fh:
     deptos = list(csv.DictReader(fh))
-R['agro'] = dict(npv_base=a0['npv_mcop'], ebitda_year1=a0['year1']['ebitda_mcop'], revenue_year1=a0['year1']['revenue_mcop'], payroll=a0['annual_staff_cost_mcop'], payroll_share=payroll_share,
+R['agro'] = dict(npv_inicial=a_ini['npv_mcop'], diseno=DISENO, npv_base=a0['npv_mcop'], ebitda_year1=a0['year1']['ebitda_mcop'], revenue_year1=a0['year1']['revenue_mcop'], payroll=a0['annual_staff_cost_mcop'], payroll_share=payroll_share,
                  price_breakeven=price_be, yield_breakeven=yield_be, hectares_breakeven=ha_be, water_at_breakeven=a_ha['annual_water_m3'], water_cap=ap.max_water_m3_year, water_base=a0['annual_water_m3'],
                  cases=agro_cases, dilution=dict(zip(rounds, dil)), departamentos=len(deptos))
 
@@ -291,18 +297,19 @@ def pg_judicial():
 
 # ---------------- 04 ----------------
 def pg_agro():
-    a = Plot('VPN del proyecto según el precio de venta', 'Línea del VPN para precios de 1,5 a 6 millones de COP por tonelada; cruza el cero en 5,0 y el caso base está en 2,4.',
+    a = Plot('VPN del proyecto según el precio de venta', f'Línea del VPN para precios de 1,5 a 6 millones de COP por tonelada; cruza el cero cerca de {f_(price_be, 1)} y el caso rediseñado está en {f_(ap.sale_price_mcop_ton, 1)}.',
              (1.5, 6.0), (min(agro_price), max(agro_price)), xlabel='Precio de venta (millones de COP por tonelada)', xticks=[2, 3, 4, 5, 6], xfmt=lambda v: f_(v, 0))
     a.line(prices, agro_price, 'rs-b')
-    a.dot(ap.sale_price_mcop_ton, a0['npv_mcop'], 'rs-c', f'caso base · {f_(ap.sale_price_mcop_ton, 1)}', dx=12, dy=26)
+    a.dot(ap.sale_price_mcop_ton, a0['npv_mcop'], 'rs-c', f'caso rediseñado · {f_(ap.sale_price_mcop_ton, 1)}', dx=12, dy=26)
     a.dot(price_be, 0, 'rs-b', f'equilibrio · {f_(price_be, 1)}', dx=-10, dy=-14)
-    f1 = figure(a.svg(), 'Fig. 1 · Qué precio necesita el proyecto', f'VPN en millones de COP constantes, con los demás parámetros iguales. Con el precio base de {f_(ap.sale_price_mcop_ton, 1)} el VPN es {sgn(a0["npv_mcop"])}; el equilibrio llega cerca de {f_(price_be, 1)}, {f_(price_be / ap.sale_price_mcop_ton, 1)} veces el precio base.',
+    f1 = figure(a.svg(), 'Fig. 1 · Qué precio necesita el proyecto', f'VPN en millones de COP constantes, con los demás parámetros del caso rediseñado iguales. Con {f_(ap.sale_price_mcop_ton, 1)} el VPN es {sgn(a0["npv_mcop"])}; el equilibrio está cerca de {f_(price_be, 1)}, apenas {f_((1 - price_be / ap.sale_price_mcop_ton) * 100, 0)} % por debajo.',
                 ['Precio (M COP/t)', 'VPN (M COP)'], [[f_(x, 2), sgn(v)] for x, v in zip(prices, agro_price) if round(x * 4) % 2 == 0])
-    rows = [(k, v, 'rs-neg' if v < 0 else 'rs-pos') for k, v in agro_cases.items()]
-    f2 = figure(hbars('VPN del proyecto por escenario', 'Barras horizontales del VPN en millones de COP para el caso base y cuatro variaciones; todas son negativas.',
-                      rows, lambda v: sgn(v), xdom=(min(v for _, v, _ in rows) * 1.12, 0), xlabel='VPN (millones de COP constantes)'),
-                'Fig. 2 · Ningún escenario cierra', 'Variaciones de un parámetro a la vez. Se omite el costo de capital: con flujos negativos, descontar más reduce las pérdidas y daría una señal engañosa.',
-                ['Escenario', 'VPN (M COP)'], [[k, sgn(v)] for k, v in agro_cases.items()])
+    sens = {k: v for k, v in agro_cases.items() if k != 'Ejercicio inicial'}
+    rows = [(k, v, 'rs-neg' if v < 0 else 'rs-pos') for k, v in sens.items()]
+    f2 = figure(hbars('VPN del caso rediseñado y sus variaciones', 'Barras horizontales del VPN en millones de COP para el caso rediseñado y siete variaciones; las que reducen precio, rendimiento o suben el CAPEX son negativas.',
+                      rows, lambda v: sgn(v), xdom=(min(v for _, v, _ in rows) * 1.25, max(v for _, v, _ in rows) * 1.12), xlabel='VPN (millones de COP constantes)'),
+                'Fig. 2 · Dónde se rompe el caso', 'Variaciones de un parámetro a la vez sobre el caso rediseñado. Se omite el costo de capital: con flujos negativos, descontar más reduce las pérdidas y daría una señal engañosa.',
+                ['Escenario', 'VPN (M COP)'], [[k, sgn(v)] for k, v in sens.items()])
     d = Plot('Participación de los productores tras una ronda de capital', 'Curva de la participación de productores, que parte de 55 %, según el capital nuevo que entra a un valor previo de 100.',
              (0, 100), (30, 60), xlabel='Capital nuevo (unidades monetarias, valor previo = 100)', ylabel='Participación de productores (%)', xticks=[0, 25, 50, 75, 100], yticks=[30, 40, 50, 60])
     d.line(rounds, dil, 'rs-b')
@@ -311,26 +318,31 @@ def pg_agro():
     f3 = figure(d.svg(), 'Fig. 3 · Dilución de los productores', 'Estructura inicial hipotética: productores 55 %, inversionistas 30 %, bolsa de incentivos 10 %, fundadores 5 %. Sin aporte propio de los productores a la ronda.',
                 ['Capital nuevo', 'Participación de productores'], [[str(r), f'{f_(v, 1)} %'] for r, v in zip(rounds, dil)])
     tdep = table(['Departamento', 'Cadenas candidatas', 'Transformación', 'Logística'], [[x['departamento'], x['cadenas_candidatas'], x['transformacion'], x['logistica']] for x in deptos])
-    hall = cifras([(sgn(a0['npv_mcop']), 'VPN del caso base en millones de COP: con estos parámetros sintéticos el proyecto no se sostiene.'),
-                   (f'{payroll_share * 100:.0f} %'.replace('.', ','), f'peso de la nómina ({fm(a0["annual_staff_cost_mcop"])}) sobre el ingreso del primer año ({fm(a0["year1"]["revenue_mcop"])}): el EBITDA del año 1 es {sgn(a0["year1"]["ebitda_mcop"])}.'),
-                   (f'{f_(price_be, 1)} M/t', f'precio de equilibrio, {f_(price_be / ap.sale_price_mcop_ton, 1)} veces el base de {f_(ap.sale_price_mcop_ton, 1)}. Escalar no lo resuelve: con {fm(ha_be)} ha el agua llega a {fm(a_ha["annual_water_m3"])} m³ y supera el tope de {fm(ap.max_water_m3_year)}.')])
-    est = (f'<p>El ejemplo de capital privado parte de {fm(ap.hectares)} hectáreas, {ap.yield_ton_ha:g} t por hectárea y un precio de {f_(ap.sale_price_mcop_ton, 1)} millones por tonelada. El ingreso del primer año es {fm(a0["year1"]["revenue_mcop"])} y la nómina de dos cuadrillas rotativas ({a0["headcount_assumed"]} personas) cuesta {fm(a0["annual_staff_cost_mcop"])}: '
-           f'ya consume {payroll_share * 100:.0f} % de lo que se vende, antes de costos variables, de campo y fijos. Por eso el EBITDA es negativo todos los años y el VPN es de {sgn(a0["npv_mcop"])} millones.</p>'
-           f'<p>Se necesitarían cerca de {f_(price_be, 1)} millones por tonelada, {f_(yield_be, 0)} t por hectárea o {fm(ha_be)} hectáreas para llegar al equilibrio. Las hectáreas parecen una salida, pero el agua lo impide: a {fm(ha_be)} ha el uso es de {fm(a_ha["annual_water_m3"])} m³ al año, {f_(a_ha["annual_water_m3"] / ap.max_water_m3_year, 1)} veces el tope de {fm(ap.max_water_m3_year)} m³. '
-           f'El caso base usa {fm(a0["annual_water_m3"])} m³, que sí cumple, pero deja poco margen para crecer.</p>'
-           f'<p>La lectura honesta es la que ya traía el propio ejercicio: un VPN negativo obliga a rediseñar el proyecto antes de buscar capital. Y no es un problema de costo de capital: aun sin descontar, la suma de los flujos a {a0["cashflows_mcop"].__len__() - 1} años es de {sgn(sum(a0["cashflows_mcop"]))} millones. Con estos parámetros el proyecto no genera caja; lo que habría que mover es la estructura de personal, el precio o el rendimiento.</p>'
+    hall = cifras([(sgn(a0['npv_mcop']) + ' M', f'VPN del caso rediseñado en millones de COP, frente a {sgn(a_ini["npv_mcop"])} del ejercicio inicial. Es un caso de diseño con supuestos explícitos, no una proyección.'),
+                   (f'{payroll_share * 100:.0f} %'.replace('.', ','), f'peso de la nómina ({fm(a0["annual_staff_cost_mcop"])}) sobre el ingreso del primer año ({fm(a0["year1"]["revenue_mcop"])}); en el ejercicio inicial era {a_ini["annual_staff_cost_mcop"] / a_ini["year1"]["revenue_mcop"] * 100:.0f} %. El EBITDA del año 1 es {sgn(a0["year1"]["ebitda_mcop"])}.'),
+                   (f'{f_(price_be, 1)} M/t · {f_(yield_be, 1)} t/ha', f'precio y rendimiento de equilibrio, a solo {f_((1 - price_be / ap.sale_price_mcop_ton) * 100, 0)} % y {f_((1 - yield_be / ap.yield_ton_ha) * 100, 0)} % de los supuestos. El proyecto es viable si se cumplen; el margen es angosto.')])
+    ini_tbl = table(['Parámetro', 'Ejercicio inicial', 'Caso rediseñado', 'Supuesto del cambio'],
+                    [['Hectáreas', fm(ap_ini.hectares), fm(ap.hectares), 'El máximo que cabe bajo el tope de agua.'],
+                     ['Rendimiento (t/ha)', f_(ap_ini.yield_ton_ha, 0), f_(ap.yield_ton_ha, 0), 'Producción tecnificada.'],
+                     ['Precio (M COP/t)', f_(ap_ini.sale_price_mcop_ton, 1), f_(ap.sale_price_mcop_ton, 1), 'Producto con algo de transformación.'],
+                     ['Personal por cuadrilla', fm(ap_ini.staff_per_rotation), fm(ap.staff_per_rotation), 'Riego y mecanización reducen la mano de obra por tonelada.'],
+                     ['Agua (m³/t)', fm(ap_ini.water_m3_per_ton), fm(ap.water_m3_per_ton), 'Riego por goteo.'],
+                     ['VPN (M COP)', sgn(a_ini['npv_mcop']), sgn(a0['npv_mcop']), 'Resultado.']])
+    est = (f'<p>El ejercicio inicial del repositorio ({fm(ap_ini.hectares)} ha, {ap_ini.yield_ton_ha:g} t/ha, {f_(ap_ini.sale_price_mcop_ton, 1)} millones por tonelada) daba un VPN de {sgn(a_ini["npv_mcop"])} millones: la nómina consumía {a_ini["annual_staff_cost_mcop"] / a_ini["year1"]["revenue_mcop"] * 100:.0f} % del ingreso del primer año y el precio de equilibrio era {f_(price_be_ini, 1)}, más del doble del base. Ese resultado obligaba a rediseñar antes de buscar capital, y eso es lo que se hizo aquí.</p>'
+           f'<p>El caso rediseñado cambia cinco supuestos, todos en la dirección que propone el proyecto (tecnificación, riego eficiente, transformación) y todos visibles en la tabla. El ingreso del primer año sube a {fm(a0["year1"]["revenue_mcop"])}, la nómina de {a0["headcount_assumed"]} personas pesa {payroll_share * 100:.0f} % y el EBITDA del año 1 es {sgn(a0["year1"]["ebitda_mcop"])}. El VPN es de {sgn(a0["npv_mcop"])} millones y la suma de los flujos a {len(a0["cashflows_mcop"]) - 1} años es de {sgn(sum(a0["cashflows_mcop"]))} millones. El uso de agua, {fm(a0["annual_water_m3"])} m³, queda dentro del tope de {fm(ap.max_water_m3_year)}.</p>'
+           f'<p>Hay que decir con claridad qué tan sólido es. El equilibrio está en {f_(price_be, 1)} millones por tonelada y {f_(yield_be, 1)} t/ha: si el precio o el rendimiento caen 10 %, el VPN pasa a {sgn(agro_cases["Precio −10 %"])} y {sgn(agro_cases["Rendimiento −10 %"])}. El caso funciona solo si se cumple lo que promete la tecnificación; eso es lo que habría que validar en campo antes de comprometer capital.</p>'
            f'<p>La curva de la Fig. 1 cambia de pendiente cerca de {f_(price_ebitda0, 1)} millones por tonelada: desde ahí el EBITDA del primer año es positivo y el modelo empieza a restar el impuesto de 35 %, que solo aplica a EBITDA positivo. Es una simplificación declarada del modelo, no un efecto del proyecto.</p>'
            f'<p>En la dilución, una ronda de 50 unidades sobre un valor previo de 100 baja a los productores de 55 % a {f_(dil[3], 1)} % si no aportan capital; la mecánica es aritmética, no una recomendación de estructura.</p>')
-    lim = limites(['Todos los parámetros son sintéticos: no es un estudio de mercado ni usa costos observados en Colombia ni una nómina validada legalmente.',
+    lim = limites(['Los cinco supuestos del caso rediseñado se eligieron para el diseño del proyecto: no vienen de un estudio de mercado ni de costos observados en Colombia, y deben validarse en campo. Todos los parámetros son sintéticos: no es un estudio de mercado ni usa costos observados en Colombia ni una nómina validada legalmente.',
                    'La rotación 15/15 se modela con dos cuadrillas y no constituye validación de jornada laboral.',
                    'Los impuestos son una simplificación (sobre el EBITDA positivo): no hay deuda, depreciación ni arrastre de pérdidas.',
                    'No es una valoración, una oferta de acciones ni asesoría legal. Cualquier mecanismo patrimonial requiere acuerdos jurídicos y consentimiento de los productores.',
                    'La tabla de departamentos lista cadenas candidatas para estudio; no es un ranking ni evidencia de rentabilidad.'])
-    cuerpo = (seccion('Qué muestran los números', aviso() + hall) + seccion('Los gráficos', f1 + f2 + f3) + seccion('Qué dicen los números', est)
+    cuerpo = (seccion('Qué muestran los números', aviso() + hall) + seccion('Los gráficos', f1 + f2 + f3) + seccion('Qué dicen los números', est + ini_tbl)
               + seccion('Cadenas candidatas por departamento', f'<p>Punto de partida para estudiar dónde probar la propuesta: {len(deptos)} departamentos con las cadenas productivas que se consideraría analizar.</p>{tdep}', 'departamentos')
               + seccion('Lo que no dicen', lim) + cierre('agroindustria', '04-agroindustry-farmer-ownership', 'Agroindustria tecnificada y propiedad campesina'))
     page('agroindustria', 'Agroindustria tecnificada y propiedad campesina: resultados',
-         'Estudiar si el productor puede participar como proveedor, trabajador o copropietario con derechos exigibles. Aquí, los resultados de un ejercicio sintético de rentabilidad, agua y dilución.', cuerpo)
+         'Estudiar si el productor puede participar como proveedor, trabajador o copropietario con derechos exigibles. Aquí, un caso rediseñado a partir de un ejercicio inicial negativo, con sus supuestos y su margen, más agua y dilución.', cuerpo)
 
 
 # ---------------- 05 ----------------
@@ -367,13 +379,13 @@ def pg_integridad():
 
 
 # ---------------- portada y CSS ----------------
-CARDS = {1: ('desarrollo-territorial', '01-territorial-development', 'Desarrollo territorial y económico', f'{sgn(rail["Base"]["npv"])} · {sgn(npv_opex_grows)}',
-             f'VPN del ferrocarril conceptual, y el mismo caso si los costos crecieran igual que los ingresos. Ejercicio sintético.', 'Ver resultados'),
+CARDS = {1: ('desarrollo-territorial', '01-territorial-development', 'Desarrollo territorial y económico', f'{sgn(rail["Base"]["npv"])} (rango {sgn(rail["Pesimista"]["npv"])} a {sgn(rail["Optimista"]["npv"])})',
+             'VPN del ferrocarril conceptual en los escenarios base, pesimista y optimista; el índice territorial sube de 100 a una mediana de 131 en diez años. Ejercicio sintético.', 'Ver resultados'),
          2: ('fraude-identidad', '02-fraud-identity', 'Fraude, identidad y KYC', f'{f_(fraud["Controlado"]["expected"] / 1e6, 1)} a {f_(fraud["Estrés"]["expected"] / 1e6, 0)} M',
-             'pérdida anual esperada en COP, del escenario controlado al de estrés. Datos simulados.', 'Ver resultados'),
+             'costo anual esperado del fraude en COP, del escenario controlado al de estrés: es lo que el sistema busca reducir. Datos simulados.', 'Ver resultados'),
          3: ('riesgo-judicial', '03-judicial-risk', 'Riesgo y analítica judicial', 'Sin resultados aún', 'Esta propuesta está en formulación: aquí, el método propuesto.', 'Ver el método'),
          4: ('agroindustria', '04-agroindustry-farmer-ownership', 'Agroindustria tecnificada y propiedad campesina', sgn(a0['npv_mcop']) + ' M',
-             f'VPN del caso base: con estos parámetros sintéticos el proyecto no se sostiene; el precio de equilibrio es {f_(price_be / ap.sale_price_mcop_ton, 1)} veces el base.', 'Ver resultados'),
+             f'VPN del caso rediseñado (el ejercicio inicial daba {sgn(a_ini["npv_mcop"])} M). Viable si se cumplen precio de {f_(price_be, 1)} y rendimiento de {f_(yield_be, 1)} t/ha; margen angosto.', 'Ver resultados'),
          5: ('integridad-publica', '05-public-integrity', 'Integridad pública verificable', 'Sí · 2 de 2', 'un registro reescrito pasa su propia verificación y solo se detecta con un punto de control externo.', 'Ver resultados')}
 
 
