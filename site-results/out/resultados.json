@@ -1,0 +1,113 @@
+{
+ "territorial": {
+  "rail_npv": {
+   "Pesimista": -2073.8367985416517,
+   "Base": 480.3954973970849,
+   "Optimista": 4570.099407184817
+  },
+  "payback_year": {
+   "Pesimista": null,
+   "Base": 10,
+   "Optimista": 6
+  },
+  "tons_breakeven": 770.9682768067873,
+  "npv_if_opex_grows": -92.29796232246497,
+  "year1_revenue": 535.0,
+  "mc_year10": {
+   "p05": 70.7454774190678,
+   "p50": 131.13287457114194,
+   "p95": 247.76530042272915,
+   "mean": 141.31526387766135
+  }
+ },
+ "fraude": {
+  "scenarios": {
+   "Controlado": {
+    "expected": 4500000.0,
+    "q": [
+     1500000.0,
+     3000000.0,
+     4500000.0,
+     5250000.0,
+     7500000.0
+    ],
+    "mean": 4487500.0
+   },
+   "Base": {
+    "expected": 13500000.0,
+    "q": [
+     8250000.0,
+     11250000.0,
+     13500000.0,
+     15000000.0,
+     18750000.0
+    ],
+    "mean": 13310000.0
+   },
+   "Estrés": {
+    "expected": 36000000.0,
+    "q": [
+     28500000.0,
+     33000000.0,
+     36000000.0,
+     39750000.0,
+     45000000.0
+    ],
+    "mean": 36375000.0
+   }
+  },
+  "example": {
+   "p": 0.7539887164489482,
+   "action": "REVIEW",
+   "after": 0.5473576181430893,
+   "after_action": "STEP_UP"
+  },
+  "p_all_zero": 0.039165722796764356
+ },
+ "agro": {
+  "npv_base": -13203.181939935064,
+  "ebitda_year1": -1636.7999999999997,
+  "revenue_year1": 2649.6,
+  "payroll": 2048,
+  "payroll_share": 0.7729468599033816,
+  "price_breakeven": 4.999418831192962,
+  "yield_breakeven": 16.062266443327594,
+  "hectares_breakeven": 739.6810152716098,
+  "water_at_breakeven": 665712.9137444488,
+  "water_cap": 200000,
+  "water_base": 180000,
+  "cases": {
+   "Caso base": -13203.181939935064,
+   "Precio −20 %": -16179.622893264246,
+   "Rendimiento −25 %": -15606.037917883103,
+   "CAPEX +35 %": -14778.181939935064,
+   "Precio +35 %": -7994.410271608994
+  },
+  "dilution": {
+   "0": 55.00000000000001,
+   "10": 50.0,
+   "25": 44.00000000000001,
+   "50": 36.66666666666667,
+   "100": 27.500000000000004
+  },
+  "departamentos": 32
+ },
+ "integridad": {
+  "verificaciones": {
+   "original": true,
+   "forged_self": true,
+   "forged_ext": false,
+   "truncated": false
+  },
+  "digests": [
+   "cfa24a634d9b3b41794994d9595d76a89b2719bf1b7f6815c8e16cb44ca4e3c3",
+   "c6b5cd874d3006072f5a6bcc653d2c344835fefea55ff560802b279b1f8d18e4"
+  ],
+  "root": "b078198ed5237e60e4787d9d49e92145dc25b3475cc6a67be7babfe210d6ae9a"
+ },
+ "_meta": {
+  "commit_programas": "4acac5f",
+  "semilla": 2026,
+  "nota": "Ejercicio con parámetros sintéticos; no son proyecciones reales."
+ }
+}
