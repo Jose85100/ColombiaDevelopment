@@ -179,6 +179,10 @@ def cierre(slug, prog, nombre):
             f' <a class="enlace" href="/proyectos/">← Volver a Proyectos</a> <a class="enlace" href="mailto:contacto@colombiarisk.com?subject=Proponer%20una%20necesidad">Proponer una necesidad →</a></p></section>')
 
 
+ETAPA = {'desarrollo-territorial': (3, 'Prefactibilidad'), 'fraude-identidad': (2, 'Validación'), 'riesgo-judicial': (1, 'Idea'),
+         'agroindustria': (2, 'Validación'), 'integridad-publica': (2, 'Validación')}
+
+
 def page(slug, titulo, dek, cuerpo):
     s = open(os.path.join(SITE, 'proyectos', 'index.html'), encoding='utf-8').read()
     head = s[:s.index('<main')]
@@ -191,7 +195,7 @@ def page(slug, titulo, dek, cuerpo):
     head = head.replace('</head>', '  <link rel="stylesheet" href="/proyectos/figuras/resultados.css?v=20261106a">\n  <link rel="stylesheet" href="/proyectos/figuras/anatomia.css?v=20261106a">\n</head>')
     foot = s[s.index('</main>'):]
     main = (f'<main id="contenido"><header class="article-header"><a class="article-back" href="/proyectos/">← Volver a Proyectos</a>'
-            f'<h1>{esc(titulo)}</h1><p class="article-dek">{dek}</p><p class="rs-estado"><span class="estado estado--prep"><i aria-hidden="true"></i>Propuesta en estudio</span></p></header>{cuerpo}')
+            f'<h1>{esc(titulo)}</h1><p class="article-dek">{dek}</p><p class="rs-estado"><span class="estado estado--prep"><i aria-hidden="true"></i>Propuesta en estudio · Etapa {ETAPA[slug][0]} de 8: {ETAPA[slug][1]}</span></p></header>{cuerpo}')
     d = os.path.join(SITE, 'proyectos', slug)
     os.makedirs(d, exist_ok=True)
     open(os.path.join(d, 'index.html'), 'w', encoding='utf-8').write(head + main + foot)
